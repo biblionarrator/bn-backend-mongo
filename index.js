@@ -126,6 +126,39 @@ function MongoBackend(config) {
         }
     };
 
+    self.media = {
+        send: function (recordid, name, res) {
+            self.connect().done(function () {
+                var gs = new mongodb.GridStore(database, recordid + '/' + name, 'r');
+                gs.open(function (err, gs) {
+                    if (err) {
+                        res.send(404);
+                    } else {
+                        gs.stream(true);
+                        gs.pipe(res);
+                    }
+                });
+            });
+        },
+        save: function (recordid, name, metadata, tmppath, callback) {
+            self.connect().done(function () {
+                var gs = new mongodb.GridStore(database, recordid + '/' + name, 'w', metadata);
+                gs.open(function(err, gridStore) {
+                    gridStore.writeFile(tmppath, function (err) {
+                        fs.unlink(tmppath, function () {
+                            callback(err);
+                        });
+                    });
+                });
+            });
+        },
+        del: function (recordid, name, callback) {
+            self.connect().then(function () {
+                mongodb.GridStore.unlink(database, recordid + '/' + name, callback);
+            });
+        }
+    };
+
     config.backendconf = config.backendconf || { };
     config.backendconf.mongo = config.backendconf.mongo || { };
     self.namespace = config.backendconf.mongo.namespace || 'biblionarrator';
