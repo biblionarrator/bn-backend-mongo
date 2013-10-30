@@ -27,7 +27,7 @@ function MongoBackend(config) {
 
     this.connect = function () {
         if (!self.connected) {
-            mongodb.MongoClient.connect('mongodb://' + (config.backend.mongo.hostname || '127.0.0.1') + '/' + self.namespace, { auto_reconnect: true, readPreference: 'nearest' }, function (err, db) {
+            mongodb.MongoClient.connect('mongodb://' + (config.backendconf.mongo.hostname || '127.0.0.1') + '/' + self.namespace, { auto_reconnect: true, readPreference: 'nearest' }, function (err, db) {
                 if (err) connect.reject(err);
                 database = db;
                 connect.resolve(database);
@@ -41,7 +41,7 @@ function MongoBackend(config) {
         if (callback) {
             self.connect().done(callback);
         } else {
-            return this.connect();
+            return self.connect();
         }
     };
 
@@ -128,7 +128,7 @@ function MongoBackend(config) {
 
     config.backendconf = config.backendconf || { };
     config.backendconf.mongo = config.backendconf.mongo || { };
-    self.namespace = config.backend.mongo.namespace || 'biblionarrator';
+    self.namespace = config.backendconf.mongo.namespace || 'biblionarrator';
     self.cacheexpire = config.cacheconf.defaultexpiry || 600;
     self.connected = false;
 }

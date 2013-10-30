@@ -1,0 +1,28 @@
+{
+  "name": "bn-importers",
+  "version": "0.1.1",
+  "author": "Jared Camins-Esakov <jcamins@cpbibliography.com>",
+  "description": "MongoDB backend for Biblionarrator",
+  "contributors": [
+    {
+      "name": "Jared Camins-Esakov",
+      "email": "jcamins@cpbibliography.com"
+    }
+  ],
+  "bin": {},
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/biblionarrator/bn-backend-mongo.git"
+  },
+  "keywords": [],
+  "dependencies": {
+    "q": "0.9.x",
+    "mongodb": "~1.3.19"
+  },
+  "bundledDependencies": [],
+  "license": "AGPLv3",
+  "engines": {
+    "node": ">=0.8"
+  }
+}
