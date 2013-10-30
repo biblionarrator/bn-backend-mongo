@@ -159,6 +159,52 @@ function MongoBackend(config) {
         }
     };
 
+    self.dump = function (outstream, promise, wantedList) {
+        self.connect().done(function () {
+            database.collections(function (err, collections) {
+                var wanted = { };
+                var queue = [ ];
+                if (wantedList) {
+                    wantedList.forEach(function (col) {
+                        wanted[col] = true;
+                    });
+                }
+                var dumpCollection = function (col, repeat) {
+                    if (repeat) outstream.write(",\n");
+                    outstream.write('"' + col.collectionName + '": [');
+                    var colstream = col.find().stream();
+                    var firstChunk = true;
+                    colstream.on('data', function (chunk) {
+                        if (!firstChunk) outstream.write(",");
+                        firstChunk = false;
+                        outstream.write(JSON.stringify(chunk));
+                    });
+                    colstream.on('end', function () {
+                        outstream.write("]");
+                        if (queue.length > 0) {
+                            dumpCollection(queue.shift(), true);
+                        } else {
+                            outstream.end("}\n", function () {
+                                promise.resolve(true);
+                            });
+                        }
+                    });
+                };
+                collections.forEach(function (col, index) {
+                    if ((!wantedList || wanted[col.collectionName]) && col.collectionName !== 'system.indexes') {
+                        queue.push(col);
+                    }
+                });
+                if (queue.length > 0) {
+                    outstream.write("{\n");
+                    dumpCollection(queue.shift());
+                } else {
+                    promise.resolve(true);
+                }
+            });
+        });
+    };
+
     config.backendconf = config.backendconf || { };
     config.backendconf.mongo = config.backendconf.mongo || { };
     self.namespace = config.backendconf.mongo.namespace || 'biblionarrator';
