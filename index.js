@@ -74,6 +74,7 @@ function MongoBackend(config) {
     }; 
 
     this.set = function (col, key, object, callback, options) {
+        options = options || { };
         self.connect().then(getCollection(col)).done(function (collection) {
             var obj;
             if (options.raw) {
