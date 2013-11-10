@@ -214,3 +214,9 @@ function MongoBackend(config) {
 }
 
 module.exports = MongoBackend;
+module.exports.description = 'MongoDB backend (clusterable)';
+module.exports.features = {
+    datastore: true,
+    mediastore: true,
+    cache: true
+};
