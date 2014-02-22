@@ -1,5 +1,6 @@
 "use strict";
 var util = require('util'),
+    fs = require('fs'),
     mongodb = require('mongodb'),
     Q = require('q');
 
